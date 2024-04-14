@@ -1,0 +1,2 @@
+nodemon GatewayService/GatewayService.js
+pause

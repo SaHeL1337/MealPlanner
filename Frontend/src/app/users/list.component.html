@@ -1,0 +1,33 @@
+﻿<h1>Users</h1>
+<a routerLink="add" class="btn btn-sm btn-success mb-2">Add User</a>
+<div class="float-right" *ngIf="users && usersOnline"><button class="btn btn-sm btn-info" [disabled]="true">{{usersOnline}}/{{users.length}} online</button></div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th style="width: 30%">ID</th>
+            <th style="width: 30%">Username</th>
+            <th style="width: 30%">Created at</th>
+            <th style="width: 10%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users">
+            <td>{{user.id}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.createdAt}}</td>
+            <td style="white-space: nowrap">
+                <a routerLink="editRoles/{{user.id}}" class="btn btn-sm btn-warning mr-1">Roles</a>
+                <a routerLink="edit/{{user.id}}" class="btn btn-sm btn-primary mr-1">Edit</a>
+                <button (click)="deleteUser(user.id)" class="btn btn-sm btn-danger btn-delete-user" [disabled]="user.isDeleting || !user.isDeletable">
+                    <span *ngIf="user.isDeleting" class="spinner-border spinner-border-sm"></span>
+                    <span *ngIf="!user.isDeleting">Delete</span>
+                </button>
+            </td>
+        </tr>
+        <tr *ngIf="!users">
+            <td colspan="4" class="text-center">
+                <span class="spinner-border spinner-border-lg align-center"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>

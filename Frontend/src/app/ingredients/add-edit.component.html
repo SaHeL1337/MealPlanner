@@ -1,0 +1,32 @@
+﻿<h1 *ngIf="isAddMode">Add Ingredient</h1>
+<h1 *ngIf="!isAddMode">Edit Ingredient</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+        <div class="form-group col">
+            <mat-form-field style="width:100%">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+            </mat-form-field>
+            <br>
+            <mat-form-field style="width:100%; margin-right: 15px;" appearance="fill">
+                <mat-label>Unit</mat-label>
+                <mat-select [formControl]="ingredientToAddUnit" [(value)]="selectedUnitValue">
+                    <mat-option *ngFor="let unit of units" value="{{unit.name}}">{{unit.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <br>
+            <mat-form-field style="width:50%">
+                <mat-label>Price</mat-label>
+                <input matInput formControlName="price" type="string">
+                <span matSuffix>€</span>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group" style="text-align: right; margin-top: 30px;">
+        <button mat-flat-button color="primary" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Save
+        </button>
+        <a routerLink="/meals" class="btn btn-link">Cancel</a>
+    </div>
+</form>

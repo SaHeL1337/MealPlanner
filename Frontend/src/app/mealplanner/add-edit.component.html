@@ -1,0 +1,140 @@
+<mat-horizontal-stepper [linear]="isLinear" #stepper>
+  <mat-step [stepControl]="mealPreferencesGroup">
+    <form [formGroup]="mealPreferencesGroup">
+      <ng-template matStepLabel>Select meal preferences</ng-template>
+
+      <mat-form-field style="width:100%; margin-right: 15px;">
+        <mat-label>Add Meal ...</mat-label>
+        <input matInput type="text"
+               [matAutocomplete]="auto"
+               [formControl]="mealToAdd"
+               >
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let meal of filteredMeals" value="{{meal.name}}">{{meal.name}}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="button" (click)="addMealToPreferences()" style="margin-right: 5px;">Add</button>
+      <br>
+      <div class="form-group" style="margin-top: 30px">
+          <mat-card *ngFor="let preference of mealPreferences" style="margin-bottom: 10px;">
+            <mat-card-title>{{preference.meal.name}}</mat-card-title>
+            <mat-card-content style="float: left;">{{preference.meal.description}}</mat-card-content>
+            <mat-card-actions style="text-align: right;">
+              <button mat-icon-button (click)="toggleBreakfast($event,preference.id)" [ngStyle]="{'color' : preference.breakfast ? 'green' : 'black'}">
+                <mat-icon>flight_takeoff</mat-icon>
+              </button>
+              <button mat-icon-button (click)="toggleLunch($event,preference.id)" [ngStyle]="{'color' : preference.lunch ? 'green' : 'black'}">
+                <mat-icon>wb_sunny</mat-icon>
+              </button>
+              <button mat-icon-button (click)="toggleDinner($event,preference.id)" [ngStyle]="{'color' : preference.dinner ? 'green' : 'black'}">
+                <mat-icon>flight_land</mat-icon>
+              </button>
+
+              <button mat-flat-button color="accent" style="margin-right: 5px;">Details</button>
+              <button mat-flat-button color="warn" (click)="removeMealFromPreferences(preference.id)">Remove</button>
+            </mat-card-actions>
+          </mat-card>
+      </div>
+      <br>
+      <div style="text-align: right;">
+        <button mat-flat-button matStepperNext color="primary">Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="generalSettingsGroup">
+    <ng-template matStepLabel>General settings</ng-template>
+    <form [formGroup]="generalSettingsGroup">
+      <mat-form-field style="width:100%; margin-right: 15px;">
+        <mat-label>Number of days</mat-label>
+        <input matInput type="number" formControlName="numberofDays">
+      </mat-form-field>
+
+      <mat-form-field style="width:100%; margin-right: 15px;">
+        <mat-label>Number of people</mat-label>
+        <input matInput type="number" formControlName="numberOfServings">
+      </mat-form-field>
+
+
+      <div style="text-align: right;">
+        <button mat-flat-button matStepperPrevious color="">Back</button>
+        <button mat-flat-button matStepperNext color="primary">Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="mealPlanGroup">
+    <ng-template matStepLabel>Meal plan</ng-template>
+    <div *ngIf="!mealPlanGenerated" style="text-align:center;margin: 50px 0px 50px 0px;">
+        <button mat-flat-button type="button" (click)="generateNewMealPlan()" color="accent">Generate Mealplan</button>
+    </div>
+    <div *ngIf="mealPlanGenerated">
+      <div class="form-group" *ngFor="let day of mealPlan" style="margin-top: 50px">
+        <h2>Day {{day.number}}</h2>
+          <mat-card style="margin-bottom: 10px;">
+            <mat-card-title>{{day.breakfast.name}}</mat-card-title>
+            <mat-card-content style="float: left;">{{day.breakfast.description}}</mat-card-content>
+            <mat-card-actions style="text-align: right;">
+              <button mat-icon-button color="accent">
+                <mat-icon>details</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="refreshMealForDayTime(day,'breakfast');">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+          <mat-card style="margin-bottom: 10px;">
+            <mat-card-title>{{day.lunch.name}}</mat-card-title>
+            <mat-card-content style="float: left;">{{day.lunch.description}}</mat-card-content>
+            <mat-card-actions style="text-align: right;">
+              <button mat-icon-button color="accent">
+                <mat-icon>details</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="refreshMealForDayTime(day,'lunch');">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+          <mat-card style="margin-bottom: 10px;">
+            <mat-card-title>{{day.dinner.name}}</mat-card-title>
+            <mat-card-content style="float: left;">{{day.dinner.description}}</mat-card-content>
+            <mat-card-actions style="text-align: right;">
+              <button mat-icon-button color="accent">
+                <mat-icon>details</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="refreshMealForDayTime(day,'dinner');">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <button mat-flat-button matStepperPrevious color="">Back</button>
+      <button mat-flat-button matStepperNext color="primary">Next</button>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="shoppingListGroup">
+    <ng-template matStepLabel>Shopping list</ng-template>
+
+        <mat-selection-list role="list">
+            <mat-list-option style="height: 100px;" role="listitem" *ngFor="let ingredient of shoppingList">
+              <span>{{ingredient.name}}: {{ingredient.amount}} {{ingredient.unit.name}}</span><span style="text-align: right;"> {{ingredient.totalPrice}}€ </span>
+                <mat-slider
+                    thumbLabel
+                    tickInterval="auto"
+                    value="{{ingredient.amount}}"
+                    step="1"
+                    min="0"
+                    max="{{ingredient.sliderMaxValue}}"
+                    (change)="changeShoppingListIngredientAmount(ingredient, $event.value)"
+                    aria-label="units">
+                </mat-slider>
+            </mat-list-option>
+        </mat-selection-list>
+    <div style="text-align: center;">
+      <h2>Estimated price: {{shoppingListTotalPrice}}€</h2>
+    </div>
+    <div style="text-align: right; margin-top: 20px;">
+      <button mat-flat-button matStepperPrevious color="primary">Back</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

@@ -1,0 +1,2 @@
+nodemon MealService/mealService.js
+pause

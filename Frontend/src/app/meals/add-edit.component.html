@@ -1,0 +1,72 @@
+<h1 *ngIf="isAddMode">Add a new Meal</h1>
+<h1 *ngIf="!isAddMode">Edit Meal</h1>
+
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-col">
+        <div class="form-group" style="margin-bottom:60px;">
+            <mat-form-field style="width:100%">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+            </mat-form-field>
+            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                <div *ngIf="f.name.errors.required">Name is required</div>
+            </div>
+            <mat-form-field style="width:100%">
+              <mat-label>Description</mat-label>
+              <textarea matInput cdkTextareaAutosize formControlName="description" [ngClass]="{ 'is-invalid': submitted && f.name.errors }"></textarea>
+            </mat-form-field>
+            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                  <div *ngIf="f.name.errors.required">Name is required</div>
+            </div>
+            <mat-form-field style="width:50%; margin-right: 15px;">
+              <mat-label>Amount of servings</mat-label>
+              <span matSuffix> servings</span>
+              <input matInput type="number" formControlName="servings" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+            </mat-form-field>
+        </div>
+        <h1>Ingredients</h1>
+        <div class="form-group" style="margin-bottom:60px;">
+          <mat-form-field style="width:100%; margin-right: 15px;">
+            <mat-label>Add Ingredient ...</mat-label>
+            <input matInput type="text"
+                   [matAutocomplete]="auto"
+                   [formControl]="ingredientToAdd"
+                   >
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let ingredient of filteredIngredients" value="{{ingredient.name}}">{{ingredient.name}} in {{ingredient.unit.name}}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field style="width:100%; margin-right: 15px;">
+              <mat-label>Amount</mat-label>
+              <input matInput type="number" [formControl]="ingredientToAddAmount" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+          </mat-form-field>
+          <br>
+          <button mat-flat-button color="primary" type="button" (click)="addIngredientToMeal()" style="margin-right: 5px;">Add</button>
+          </div>
+
+          <div class="form-group">
+            <mat-card *ngFor="let ingredient of ingredientsOfMeal" style="margin-bottom: 10px;">
+              <mat-card-content style="float: left;">{{ingredient.name}}: {{ingredient.amount}} {{ingredient.unit.name}}</mat-card-content>
+              <mat-card-actions style="text-align: right;">
+                <button mat-icon-button  color="accent" (click)="removeIngredientFromMeal(ingredient.id)">
+                  <mat-icon>details</mat-icon>
+                </button>
+                <button mat-icon-button  color="warn" (click)="removeIngredientFromMeal(ingredient.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+
+
+
+    <div class="form-group" style="text-align: right; margin-top: 30px;">
+        <button mat-flat-button color="primary" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Save
+        </button>
+        <a routerLink="/meals" class="btn btn-link">Cancel</a>
+    </div>
+</form>

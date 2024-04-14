@@ -1,0 +1,33 @@
+﻿<div class="card" style="max-width: 500px; margin:auto; margin-top: 20%;">
+    <h4 class="card-header">Login</h4>
+    <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <mat-form-field style="width:100%">
+              <mat-label>Username</mat-label>
+              <input matInput type="text" formControlName="username" [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+              </mat-form-field>
+            <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                    <div *ngIf="f.username.errors.required">Username is required</div>
+                </div>
+            </div>
+            <div class="form-group">
+              <mat-form-field style="width:100%">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" formControlName="password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+              </mat-form-field>
+            <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                    <div *ngIf="f.password.errors.required">Password is required</div>
+                </div>
+            </div>
+
+            <div class="form-group" style="text-align: right;">
+                <button mat-flat-button color="primary" [disabled]="loading" >
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                    Login
+                </button>
+                <a routerLink="../register" class="btn btn-link">Register</a>
+            </div>
+        </form>
+    </div>
+</div>
